@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Förster Apotheke Premium POS V2</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* -------------------------------------------------------------
+           RESET & VIEWPORT
+        ------------------------------------------------------------- */
+        * {
+            box-sizing: border-box; 
+        }
+
+         html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #F2F0EB;
+        }
+
+        #pos-canvas {
+            width: 1080px;
+            height: 1920px;
+            background-color: #F2F0EB;
+            overflow: hidden;
+            padding: 80px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+        }
+
+        /* -------------------------------------------------------------
+           PREVENT FOUC
+        ------------------------------------------------------------- */
+        .is-animated {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* -------------------------------------------------------------
+           DESIGN SYSTEM V2
+        ------------------------------------------------------------- */
+        :root {
+            --primary-red: #DA291C; 
+            --text-dark: #111111;
+            --text-grey: #666666;
+            --white: #ffffff;
+        }
+
+        /* --- 1. FULL WIDTH IMAGE SECTION --- */
+        .hero-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Starts full height */
+            background-color: #eee;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center; 
+        }
+
+        /* --- 2. BOTTOM CONTENT CARD --- */
+        .content-card {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 45%; /* Covers the bottom of the image */
+            background-color: var(--white);
+            border-radius: 60px 60px 0 0;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.15); 
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 80px;
+            text-align: center;
+        }
+
+        /* --- LOGO (Floating at intersection) --- */
+        .logo-container {
+            position: absolute;
+            top: -75px; 
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+
+        .brand-logo {
+            width: 100px;
+            height: auto;
+        }
+
+        /* --- TEXT ELEMENTS --- */
+        .header-group {
+            margin-top: 100px;
+            margin-bottom: 30px;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h1.main-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 85px;
+            line-height: 1;
+            color: var(--text-dark);
+            margin: 0 0 20px 0;
+            font-weight: 700;
+        }
+
+        .divider {
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-red);
+            border-radius: 2px;
+            margin: 0 auto 30px auto;
+        }
+
+        .message-group {
+            margin-bottom: 30px;
+        }
+
+        .sub-headline {
+            font-size: 36px;
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .body-text {
+            font-size: 28px;
+            color: var(--text-grey);
+            line-height: 1.5;
+            max-width: 800px;
+        }
+
+        /* --- FOOTER (Updated Styles) --- */
+        .footer-info {
+            margin-top: auto; 
+            width: 100%;
+            /* Red Background */
+            background-color: var(--primary-red);
+            color: var(--white);
+            /* Padding adjustment */
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            /* Ensure it fills the bottom curve if needed, but here it's inside the card */
+            /* We need to stretch it to edges */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .address {
+            font-size: 38px; /* Bigger font */
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .distance-info {
+            font-size: 28px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="pos-canvas">
+        
+        <!-- 1. Full Width Image (Starts full height) -->
+        <div class="hero-section">
+            <img src="https://lh3.googleusercontent.com/p/AF1QipPIZyAUgyzTFtUvsr0MUyTZYRcMW8USrb0b-xLA=s761-k-no" alt="Förster Apotheke" class="hero-image" id="hero-img">
+        </div>
+
+        <!-- 2. Content Card (Slides in from bottom) -->
+        <div class="content-card" id="card">
+            
+            <div class="logo-container is-animated" id="logo-badge">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Deutsche_Apotheke_Logo.svg/1009px-Deutsche_Apotheke_Logo.svg.png" alt="Logo" class="brand-logo">
+            </div>
+
+            <div class="header-group">
+                <div class="brand-name is-animated" id="brand">Förster Apotheke</div>
+                <h1 class="main-headline is-animated" id="headline">
+                    Ihre Gesundheit<br>
+                    im Mittelpunkt.
+                </h1>
+            </div>
+
+            <div class="divider is-animated" id="divider"></div>
+
+            <div class="message-group is-animated" id="message">
+                <div class="sub-headline">Schneller als online.</div>
+                <div class="body-text">Wir beraten Sie kompetent & persönlich.<br>Ihr Team vor Ort in Langenfelde.</div>
+            </div>
+
+            <div class="footer-info is-animated" id="footer">
+                <div class="address">Wolffstraße 9, 22525 Hamburg</div>
+                <div class="distance-info">Nur 4 Minuten entfernt</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // -------------------------------------------------------------
+        // SCALING
+        // -------------------------------------------------------------
+        function resizeTemplate() {
+            const canvas = document.getElementById('pos-canvas');
+            const scale = Math.min(
+                window.innerWidth / 1080,
+                window.innerHeight / 1920
+            );
+            canvas.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', resizeTemplate);
+        resizeTemplate();
+
+        // -------------------------------------------------------------
+        // ANIMATION V2
+        // -------------------------------------------------------------
+        
+        const tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
+        
+        // Make timeline available globally for controls
+        window.animationTimeline = tl;
+        
+        // Elements
+        const heroImg = document.getElementById('hero-img');
+        const card = document.getElementById('card');
+        const logoBadge = document.getElementById('logo-badge');
+        const brand = document.getElementById('brand');
+        const headline = document.getElementById('headline');
+        const divider = document.getElementById('divider');
+        const message = document.getElementById('message');
+        const footer = document.getElementById('footer');
+
+        // --- SETUP ---
+        gsap.set(heroImg, { transformOrigin: "center center" }); 
+
+        // --- ENTER SEQUENCE ---
+        tl.addLabel("enter");
+
+        // 1. Initial State: Card off screen
+        gsap.set(card, { yPercent: 100 });
+        
+        // Start state for image: Normal scale (covers screen)
+        tl.fromTo(heroImg, 
+            { scale: 1.0, yPercent: 0 }, 
+            { scale: 1.0, duration: 0.1 }, 
+            "enter"
+        );
+
+        // 2. Card Slides Up
+        tl.to(card, 
+            { yPercent: 0, duration: 1.2, ease: "power3.inOut" },
+            "enter+=0.5"
+        );
+
+        // 3. IMAGE "SHRINK & PAN" EFFECT
+        // As the card covers the bottom, we scale the image DOWN (0.75) 
+        // effectively "zooming out" to show more of the room.
+        // We also move it UP (-25%) to center the interesting part in the remaining top window.
+        tl.to(heroImg, {
+            yPercent: -25, 
+            scale: 0.85,   // Shrinks to show more context (16:9-ish feel)
+            duration: 1.2,
+            ease: "power3.inOut"
+        }, "<"); 
+
+        // 3. Logo Badge Pops 
+        tl.fromTo(logoBadge,
+            { autoAlpha: 0, scale: 0, y: 50 },
+            { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" },
+            "enter+=1.4"
+        );
+
+        // 4. Content Reveal
+        const contentVars = { 
+            start: { autoAlpha: 0, y: 30, filter: "blur(5px)" },
+            end: { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power2.out" }
+        };
+
+        tl.fromTo(brand, contentVars.start, contentVars.end, "enter+=1.5");
+        tl.fromTo(headline, contentVars.start, contentVars.end, "enter+=1.6");
+        
+        tl.fromTo(divider, 
+            { autoAlpha: 0, width: 0 }, 
+            { autoAlpha: 1, width: 80, duration: 0.8, ease: "power2.inOut" }, 
+            "enter+=1.7"
+        );
+
+        tl.fromTo(message, contentVars.start, contentVars.end, "enter+=1.8");
+        tl.fromTo(footer, { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, "enter+=1.9");
+
+
+        // --- HOLD SEQUENCE ---
+        tl.addLabel("hold");
+
+        // Subtle slow pan during hold to keep it alive
+        // Moves slightly from the shrunk position
+        tl.to(heroImg, {
+            scale: 0.9,
+            duration: 5.0,
+            ease: "none"
+        }, "enter+=1.7"); 
+
+        // Ensure hold time
+        tl.to({}, { duration: 4.0 }, "hold");
+
+
+        // --- EXIT SEQUENCE ---
+        tl.addLabel("exit");
+
+        // 1. Content fades out first
+        tl.to([footer, message, divider, headline, brand, logoBadge], {
+            autoAlpha: 0,
+            y: 20,
+            stagger: 0.05,
+            duration: 0.5,
+            ease: "power2.in"
+        }, "exit");
+
+        // 2. Card slides down
+        tl.to(card, {
+            yPercent: 100,
+            duration: 0.8,
+            ease: "power3.in"
+        }, "exit+=0.4");
+
+        // 3. Image restores/fades
+        tl.to(heroImg, {
+            opacity: 0.8, 
+            scale: 1.0,
+            yPercent: 0,
+            duration: 0.8
+        }, "exit+=0.4");
+        
+        // Final fade reset
+        tl.to(heroImg, { opacity: 1, duration: 0.1 });
+
+    </script>
+</body>
+</html>

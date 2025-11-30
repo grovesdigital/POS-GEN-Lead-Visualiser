@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>die 2 Augenoptik POS</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* -------------------------------------------------------------
+           RESET & VIEWPORT
+        ------------------------------------------------------------- */
+        * { box-sizing: border-box; }
+
+        body {
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        display: block; /* von flex zu block ändern */
+        font-family: 'Inter', sans-serif;
+        }
+
+            #pos-canvas {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        /* Premium "Greige" / Warm Grey Background */
+        background-color: #F2F0EB; 
+        overflow: hidden; 
+        box-shadow: 0 0 100px rgba(255, 255, 255, 0.5);
+        /* Padding for the grid */
+        padding: 80px;
+        transform-origin: top left; /* DIESE ZEILE HINZUFÜGEN */
+    }
+
+        /* -------------------------------------------------------------
+           HELPER CLASSES
+        ------------------------------------------------------------- */
+        .is-animated {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* -------------------------------------------------------------
+           DESIGN SYSTEM
+        ------------------------------------------------------------- */
+        :root {
+            /* Brand Color: Orange */
+            --primary-color: #ce5f38; 
+            --ink-black: #1a1a1a;
+            --text-grey: #555555;
+            --white: #ffffff;
+        }
+
+        /* --- GRID LAYOUT --- */
+        .layout-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* --- 1. HEADER SECTION --- */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            position: relative;
+        }
+
+        .header-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0,0,0,0.1);
+            transform-origin: left center;
+        }
+
+        .brand-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .brand-logo {
+            width: 220px; /* Increased size since text is hidden */
+            height: auto;
+            margin-bottom: 20px;
+            mix-blend-mode: multiply; 
+        }
+
+        /* HIDDEN VIA CSS per request */
+        .brand-name {
+            display: none; 
+            font-family: 'Inter', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+        }
+
+        /* Circular Badge Styling */
+        .est-date {
+            font-family: 'Inter', sans-serif;
+            width: 110px;
+            height: 110px;
+            background-color: var(--ink-black);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        
+        /* Glasses Icon inside badge */
+        .glasses-icon {
+            width: 60px;
+            height: auto;
+            stroke: var(--white);
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- 2. HERO TYPOGRAPHY --- */
+        .typography-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
+        /* Giant Editorial Headline */
+        h1.headline {
+            font-family: 'Inter', sans-serif;
+            font-size: 110px;
+            line-height: 1.1;
+            color: var(--ink-black);
+            margin: 0;
+            letter-spacing: -4px;
+            font-weight: 800;
+        }
+
+        .italic-accent {
+            font-style: italic;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        /* --- SINGLE TEXT BLOCK --- */
+        .editorial-text-block {
+            margin-top: 60px;
+            max-width: 850px;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 40px;
+        }
+
+        .editorial-subline {
+            font-family: 'Inter', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--ink-black);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .editorial-body {
+            font-family: 'Inter', sans-serif;
+            font-size: 30px;
+            color: var(--text-grey);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* --- 3. BOTTOM IMAGE --- */
+        .image-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 42%; 
+            z-index: 1;
+        }
+
+        .image-mask {
+            width: 100%;
+            height: 100%;
+            background: #ccc;
+            /* Changed from top-left to top-right */
+            border-top-right-radius: 600px; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+        }
+        
+        /* Floating Address Box */
+        .address-floater {
+            position: absolute;
+            bottom: 60px;
+            right: 60px;
+            background: var(--white);
+            padding: 40px 60px;
+            z-index: 10;
+            box-shadow: 20px 20px 0px rgba(206, 95, 56, 1); /* Orange Shadow */
+        }
+
+        .addr-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .addr-street { font-size: 36px; font-weight: 700; color: var(--ink-black); display: block; }
+        .addr-city { font-size: 24px; color: var(--text-grey); display: block; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="pos-canvas">
+        
+        <div class="layout-wrapper">
+            
+            <!-- HEADER -->
+            <div class="header-row">
+                <div class="header-line" id="header-line"></div>
+                
+                <div class="brand-group">
+                    <!-- Logo -->
+                    <img src="https://www.die2augenoptik.de/wp-content/uploads/die-2-augenoptik_logo.jpg" alt="Logo" class="brand-logo is-animated" id="logo">
+                    <!-- HIDDEN Brand Name -->
+                    <div class="brand-name is-animated" id="brand-name">die 2 Augenoptik</div>
+                </div>
+                
+                <!-- Badge with Glasses Icon -->
+                <div class="est-date is-animated" id="est-date">
+                    <svg class="glasses-icon" viewBox="0 0 64 32">
+                        <!-- Left Lens -->
+                        <circle cx="16" cy="16" r="12" />
+                        <!-- Right Lens -->
+                        <circle cx="48" cy="16" r="12" />
+                        <!-- Bridge -->
+                        <path d="M28 16 Q32 10 36 16" stroke-linecap="round" fill="none" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- TYPOGRAPHY -->
+            <div class="typography-section">
+                
+                <!-- Headlines -->
+                <h1 class="headline" id="hl-1">Kompetent.</h1>
+                <h1 class="headline" id="hl-2">Engagiert.</h1>
+                <h1 class="headline italic-accent" id="hl-3">Familiär.</h1>
+
+                <!-- Unified Editorial Text Block -->
+                <div class="editorial-text-block is-animated" id="text-block">
+                    <div class="editorial-subline">Ihr Optiker in der Osterstraße.</div>
+                    <div class="editorial-body">
+                        Das Team ist mit Leidenschaft und Sachverstand auf der Suche nach der idealen Brille für Sie.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- IMAGE (Anchored Bottom) -->
+        <div class="image-section">
+            <div class="image-mask" id="mask">
+                <img src="https://www.die2augenoptik.de/wp-content/uploads/IMG_7020test-1-scaled.jpg" alt="Interior" class="hero-image" id="hero-img">
+            </div>
+            
+            <!-- Address Box -->
+            <div class="address-floater is-animated" id="address-box">
+                <span class="addr-name" id="addr-name">DIE 2 AUGENOPTIK</span>
+                <span class="addr-street" id="addr-street">Osterstraße 128</span>
+                <span class="addr-city" id="addr-city">20255 Hamburg-Eimsbüttel</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // -------------------------------------------------------------
+        // SCALING
+        // -------------------------------------------------------------
+        function resizeTemplate() {
+            const canvas = document.getElementById('pos-canvas');
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // Skalierungsfaktor berechnen basierend auf verfügbarem Platz
+            const scaleX = windowWidth / 1080;
+            const scaleY = windowHeight / 1920;
+            const scale = Math.min(scaleX, scaleY);
+            
+            canvas.style.transform = `scale(${scale})`;
+        }
+        window.addEventListener('resize', resizeTemplate);
+        resizeTemplate();
+
+        // -------------------------------------------------------------
+        // ANIMATION
+        // -------------------------------------------------------------
+        
+        const tl = gsap.timeline({ repeat: -1, repeatDelay: 1, onRepeat: resetElements });
+        
+        // Make timeline available globally for controls
+        window.animationTimeline = tl;
+        
+        // Elements
+        const headerLine = document.getElementById('header-line');
+        const logo = document.getElementById('logo');
+        // Brand name excluded
+        const estDate = document.getElementById('est-date');
+        
+        const hl1 = document.getElementById('hl-1');
+        const hl2 = document.getElementById('hl-2');
+        const hl3 = document.getElementById('hl-3');
+        const textBlock = document.getElementById('text-block');
+        
+        const mask = document.getElementById('mask');
+        const img = document.getElementById('hero-img');
+        const addressBox = document.getElementById('address-box');
+        const addrName = document.getElementById('addr-name');
+        const addrStreet = document.getElementById('addr-street');
+        const addrCity = document.getElementById('addr-city');
+
+        // --- RESET FUNCTION ---
+        function resetElements() {
+            gsap.set(headerLine, { scaleX: 0 }); 
+            gsap.set(logo, { y: -20, autoAlpha: 0 });
+            gsap.set(estDate, { scale: 0, rotation: -90, autoAlpha: 0 });
+            gsap.set([hl1, hl2, hl3], { y: 100, opacity: 0 }); 
+            gsap.set(textBlock, { x: -50, opacity: 0 }); 
+            gsap.set(mask, { yPercent: 100 }); 
+            gsap.set(img, { scale: 1.2, yPercent: -20, transformOrigin: "left center" }); 
+            gsap.set(addressBox, { autoAlpha: 0, scale: 0.8, y: 50 });
+            gsap.set([addrCity, addrStreet, addrName], { y: 20, autoAlpha: 0 });
+        }
+
+        // --- SETUP ---
+        gsap.set(headerLine, { scaleX: 0 }); 
+        gsap.set(logo, { y: -20, autoAlpha: 0 });
+        gsap.set(estDate, { scale: 0, rotation: -90, autoAlpha: 0 });
+        
+        gsap.set([hl1, hl2, hl3], { y: 100, opacity: 0 }); 
+        gsap.set(textBlock, { x: -50, opacity: 0 }); 
+        
+        gsap.set(mask, { yPercent: 100 }); 
+        // Update transformOrigin to "left center" to reveal right side on zoom out
+        gsap.set(img, { scale: 1.2, yPercent: -20, transformOrigin: "left center" }); 
+
+        // --- ENTER SEQUENCE ---
+        tl.addLabel("enter");
+
+        // 1. Draw Header Line
+        tl.to(headerLine, { duration: 1.0, scaleX: 1, ease: "power4.inOut" }, "enter");
+
+        // 2. Logo Drop In
+        tl.to(logo, { 
+            y: 0, 
+            autoAlpha: 1, 
+            duration: 0.8, 
+            ease: "power2.out" 
+        }, "enter+=0.5");
+
+        // Circular Badge Pop (Glasses Icon)
+        tl.to(estDate, {
+            scale: 1,
+            rotation: 0,
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: "back.out(1.5)"
+        }, "enter+=0.7");
+
+        // 3. Headline Stagger
+        tl.to([hl1, hl2, hl3], {
+            duration: 1.0,
+            y: 0,
+            opacity: 1,
+            stagger: 0.15,
+            ease: "power3.out"
+        }, "enter+=0.4");
+
+        // 4. Text Block Slide In
+        tl.fromTo(textBlock, 
+            { x: -50, autoAlpha: 0 },
+            { x: 0, autoAlpha: 1, duration: 1.0, ease: "power2.out" },
+            "enter+=0.9"
+        );
+
+        // 5. Image Reveal
+        tl.to(mask, {
+            duration: 1.5,
+            yPercent: 0,
+            ease: "power3.inOut"
+        }, "enter+=0.6");
+
+        tl.to(img, {
+            duration: 1.5,
+            yPercent: 0,
+            ease: "power3.inOut"
+        }, "enter+=0.6");
+
+        // 6. Address Box Pops
+        tl.fromTo(addressBox,
+            { autoAlpha: 0, scale: 0.8, y: 50 },
+            { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: "back.out(1.5)" },
+            "enter+=1.6"
+        );
+
+
+        // --- HOLD SEQUENCE ---
+        tl.addLabel("hold");
+
+        // Cinematic Slow Zoom (Out) to reveal image from left to right
+        tl.to(img, {
+            scale: 1.0, 
+            duration: 5.0,
+            ease: "none"
+        }, "enter+=0.6"); 
+
+        tl.to({}, { duration: 4.0 }, "hold");
+
+
+        // --- EXIT SEQUENCE ---
+        tl.addLabel("exit");
+
+        // 1. Address box content fades
+        tl.to([addrCity, addrStreet, addrName], {
+            y: 20,
+            autoAlpha: 0,
+            stagger: 0.05,
+            duration: 0.4,
+            ease: "power2.in"
+        }, "exit");
+
+        // 2. Address box drops
+        tl.to(addressBox, {
+            y: 50,
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: "power2.in"
+        }, "exit+=0.2");
+
+        // 3. Image slides down
+        tl.to(mask, {
+            yPercent: 100,
+            duration: 1.0,
+            ease: "power3.inOut"
+        }, "exit+=0.3");
+        
+        // 4. Text Exits
+        tl.to([textBlock, hl3, hl2, hl1], {
+            y: -50,
+            opacity: 0,
+            stagger: 0.05,
+            duration: 0.6,
+            ease: "power2.in"
+        }, "exit+=0.4");
+
+        // 5. Header Exits
+        tl.to([estDate, logo], {
+            y: -20,
+            autoAlpha: 0,
+            stagger: 0.05,
+            duration: 0.5
+        }, "exit+=0.5");
+
+        // 6. Line undraws
+        tl.to(headerLine, { duration: 0.6, scaleX: 0, transformOrigin: "right center", ease: "power3.in" }, "exit+=0.7");
+
+    </script>
+</body>
+</html>

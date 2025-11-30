@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>POS Demo - Ihre Werbung Live</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --brand: #004b93;
+            --brand-dark: #003870;
+            --text-dark: #0f172a;
+            --text: #475569;
+            --bg-light: #f8fafc;
+            --card: rgba(255, 255, 255, 0.95);
+            --shadow-soft: 0 20px 40px -24px rgba(15, 23, 42, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-light);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ::selection {
+            background: #dbeafe;
+        }
+
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .logo-pack img.nav-logo {
+            height: 48px;
+            width: auto;
+            display: block;
+        }
+
+        .slot-chip {
+            border: 1px solid #bfdbfe;
+            background: #dbeafe;
+            color: var(--brand);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-cta {
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 999px;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 25px 45px -24px rgba(0, 75, 147, 0.7);
+        }
+
+        main {
+            background: linear-gradient(180deg, #fff 0%, #eef2ff 60%, #f8fafc 100%);
+        }
+
+        .hero {
+            padding: 120px 24px 72px;
+        }
+
+        .hero-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 48px;
+            align-items: center;
+        }
+
+        @media (min-width: 900px) {
+            .hero-grid {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            }
+        }
+
+        @media (max-width: 899px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-text {
+            max-width: 100%;
+        }
+
+        .hero-text h2 {
+            font-size: clamp(2rem, 3.5vw, 2.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .hero-text > p {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .benefits-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .benefit-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-content h4 {
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .benefit-content p {
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fde047;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 4vw, 3.8rem);
+            line-height: 1.05;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 18px;
+        }
+
+        .hero h1 span {
+            color: var(--brand);
+        }
+
+        .hero p {
+            margin-top: 20px;
+            font-size: 1.05rem;
+            color: var(--text);
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .hero-panel {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+            border-radius: 24px;
+            border: 2px solid #bfdbfe;
+            padding: 0;
+            box-shadow: 0 20px 50px -20px rgba(0, 75, 147, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand) 0%, #60a5fa 100%);
+        }
+
+        .panel-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 0 0 12px 0;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .panel-content {
+            padding: 24px 32px 32px;
+        }
+
+        .hero-panel h3 {
+            font-size: 1.35rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .savings-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #dcfce7;
+            color: #15803d;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .savings-highlight .old-price {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-weight: 500;
+        }
+
+        .hero-panel ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        .hero-panel li {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .hero-panel li .icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .hero-panel li .icon-wrap.bolt {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .hero-panel li .icon-wrap.lock {
+            background: #dbeafe;
+            color: var(--brand);
+        }
+
+        .hero-panel li .icon-wrap.check {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .panel-cta {
+            width: 100%;
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .panel-cta:hover {
+            background: var(--brand-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 75, 147, 0.3);
+        }
+
+        .panel-footer {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .panel-footer i {
+            color: #f59e0b;
+        }
+
+        .btn {
+            border-radius: 16px;
+            font-weight: 700;
+            padding: 16px 28px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn.primary {
+            background: var(--brand);
+            color: #fff;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #fff;
+            color: var(--text-dark);
+            border: 1px solid #e2e8f0;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-top: 28px;
+            color: #0f172a;
+        }
+
+        .trust-badge i {
+            color: #10b981;
+        }
+
+        .stage-section {
+            background: transparent;
+            padding: 0;
+        }
+
+        .stage-container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            margin: 0 auto;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .content-wrapper {
+            position: absolute;
+            z-index: 10;
+            left: 45.6%;
+            top: 13.42%;
+            height: 43.5%;
+            aspect-ratio: 9 / 16;
+            transform-origin: 0 0;
+            transform: perspective(51vw) translate3d(0.1vw, 0.09vw, 19.8vw) rotateY(20.5deg) rotateX(-11deg) rotateZ(0.2deg) skewX(4.8deg) skewY(6deg) scale(1);
+            background-color: #ffffff;
+            overflow: hidden;
+            filter: contrast(0.98) saturate(0.99) brightness(0.995);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .content-scaler {
+            position: absolute;
+            width: 1080px;
+            height: 1920px;
+            transform-origin: top left;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #dynamic-content {
+            width: 1080px;
+            height: 1920px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        .animation-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            z-index: 30;
+        }
+
+        .control-btn {
+            background: rgba(0, 75, 147, 0.9);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 59, 112, 0.95);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.pause {
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        .control-btn.pause:hover {
+            background: rgba(217, 119, 6, 0.95);
+        }
+
+        .control-btn.restart {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .control-btn.restart:hover {
+            background: rgba(5, 150, 105, 0.95);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #fde68a;
+            color: #78350f;
+            font-size: 1.25rem;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        /* Stage-New Styles */
+        .stage-new-section {
+            margin-top: 0;
+            padding: 40px 24px 60px;
+            background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+        }
+
+        .stage-new-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stage-new-frame {
+            position: relative;
+            width: 100%;
+            overflow: visible;
+        }
+
+        .stage-new-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .stage-new-header h2 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .stage-new-header p {
+            color: #64748b;
+            font-size: 1.05rem;
+        }
+
+        .stage-new-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            margin: 0 auto;
+            background-image: url('background-test.webp');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f8fafc;
+            border-radius: 24px;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .stage-new-content-wrapper {
+            position: absolute;
+            z-index: 10;
+            background-color: #ffffff;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stage-new-content-scaler {
+            position: absolute;
+            width: 1080px;
+            height: 1920px;
+            transform-origin: top left;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #dynamic-content-new {
+            width: 1080px;
+            height: 1920px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        .stage-new-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            z-index: 30;
+        }
+
+        .stage-new-text {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 40%;
+            z-index: 5;
+            padding: 32px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stage-new-text .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fde047;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stage-new-text h1 {
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            line-height: 1.1;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 18px;
+        }
+
+        .stage-new-text h1 span {
+            color: var(--brand);
+        }
+
+        .stage-new-text p {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .stage-new-text .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .stage-new-text .btn {
+            font-size: 0.9rem;
+            padding: 12px 20px;
+        }
+
+        @media (max-width: 899px) {
+            .stage-new-section {
+                padding: 40px 16px;
+                margin-top: 60px;
+            }
+
+            .stage-new-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .stage-new-stage {
+                border-radius: 16px;
+            }
+
+            .stage-new-text {
+                max-width: 50%;
+                padding: 20px;
+                font-size: 0.9rem;
+            }
+
+            .stage-new-text h1 {
+                font-size: 1.5rem;
+            }
+
+            .stage-new-text p {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stage-new-section {
+                padding: 30px 12px;
+                margin-top: 40px;
+            }
+
+            .stage-new-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .stage-new-header p {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stage-new-frame {
+                position: static;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 32px;
+            }
+
+            .stage-new-stage {
+                max-width: 520px;
+                margin: 0 auto;
+            }
+
+            .stage-new-text {
+                position: static;
+                left: auto;
+                top: auto;
+                transform: none;
+                max-width: 520px;
+                width: 100%;
+                padding: 24px;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 24px;
+                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+            }
+
+            .stage-new-text .hero-actions {
+                flex-direction: column;
+            }
+        }
+
+        .partner-section {
+            background: #fff;
+            padding: 0 24px 64px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            overflow: hidden;
+        }
+
+        .partner-section p {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            font-weight: 700;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            margin-bottom: 32px;
+        }
+
+        .partner-logos-wrapper {
+            max-width: 100%;
+            overflow: hidden;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .partner-logos {
+            display: flex;
+            align-items: center;
+            gap: 64px;
+            animation: scroll-logos 30s linear infinite;
+            width: max-content;
+        }
+
+        .partner-logos:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-logos {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .partner-logos img {
+            filter: grayscale(1);
+            opacity: 0.55;
+            transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .partner-logos img:hover {
+            filter: none;
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .section {
+            padding: 80px 24px;
+        }
+
+        .section h2 {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .section p.section-intro {
+            text-align: center;
+            color: #64748b;
+            max-width: 560px;
+            margin: 0 auto 48px;
+        }
+
+        .stats-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 1.3rem;
+        }
+
+        .stat-card h3 {
+            font-size: 2.8rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+        }
+
+        .stat-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        .process-section {
+            background: #0f172a;
+            color: #fff;
+            text-align: center;
+        }
+
+        .process-section h2 {
+            color: #fff;
+        }
+
+        .process-grid {
+            max-width: 1000px;
+            margin: 48px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 36px;
+            position: relative;
+        }
+
+        .process-step {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 32px -30px rgba(15, 23, 42, 0.9);
+        }
+
+        .step-index {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .pricing-section {
+            background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+            position: relative;
+        }
+
+        .pricing-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.3), transparent);
+        }
+
+        .pricing-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .calculator-card {
+            background: #fff;
+            border-radius: 32px;
+            padding: 48px;
+            box-shadow: 0 20px 60px -20px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .calculator-header h3 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .calculator-header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .price-display {
+            text-align: center;
+            margin-bottom: 48px;
+            padding: 32px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 24px;
+            border: 2px solid #bfdbfe;
+            position: relative;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .discount-badge.visible {
+            opacity: 1;
+        }
+
+        .price-amount {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--brand);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .price-period {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .price-breakdown {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .price-breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .price-breakdown-row strong {
+            color: var(--text-dark);
+        }
+
+        .price-breakdown .original {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .slider-container {
+            margin-bottom: 48px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .slider-label span:first-child {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+        }
+
+        .slider-value {
+            background: var(--brand);
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .slider-track {
+            position: relative;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
+        .slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand) 0%, #60a5fa 100%);
+            border-radius: 999px;
+            transition: width 0.2s ease;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            background: var(--brand);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 75, 147, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: var(--brand);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 75, 147, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .calculator-step {
+            margin-bottom: 48px;
+        }
+
+        .step-header {
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--brand);
+            color: #fff;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 12px;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .duration-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .duration-preset {
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .duration-preset:hover {
+            border-color: #bfdbfe;
+            background: #f8fafc;
+        }
+
+        .duration-preset.active {
+            border-color: var(--brand);
+            background: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(0, 75, 147, 0.1);
+        }
+
+        .duration-preset input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .duration-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .duration-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .duration-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .variants-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .variants-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .variants-count {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--brand);
+        }
+
+        .variants-price {
+            text-align: right;
+        }
+
+        .variants-price-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .variants-price-label {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .variants-slider-track {
+            position: relative;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            margin: 24px 0 12px;
+        }
+
+        .variants-slider-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand) 0%, #60a5fa 100%);
+            border-radius: 999px;
+            transition: width 0.2s ease;
+        }
+
+        .variants-markers {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+
+        .variants-marker {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .variants-marker.active {
+            color: var(--brand);
+            font-weight: 700;
+        }
+
+        .variants-info {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .frequency-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 48px;
+        }
+
+        .frequency-option {
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .frequency-option:hover {
+            border-color: #bfdbfe;
+            background: #f8fafc;
+        }
+
+        .frequency-option.active {
+            border-color: var(--brand);
+            background: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(0, 75, 147, 0.1);
+        }
+
+        .frequency-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .frequency-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .frequency-desc {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .frequency-price {
+            font-weight: 700;
+            color: var(--brand);
+            font-size: 0.9rem;
+        }
+
+        .frequency-price.included {
+            color: #10b981;
+        }
+
+        .pricing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 24px;
+            background: #f8fafc;
+            border-radius: 16px;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .pricing-feature i {
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+
+        .calculator-cta {
+            width: 100%;
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            padding: 18px 32px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(0, 75, 147, 0.25);
+        }
+
+        .calculator-cta:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 75, 147, 0.35);
+        }
+
+        .pricing-note {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .identity-section {
+            background: #fff;
+        }
+
+        .identity-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .identity-grid ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .identity-grid li {
+            display: flex;
+            gap: 14px;
+        }
+
+        .identity-grid li .marker {
+            width: 48px;
+            height: 48px;
+            background: #e0f2fe;
+            color: var(--brand);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-card {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 32px;
+            padding: 36px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .testimonial-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top, rgba(59, 130, 246, 0.3), transparent);
+            pointer-events: none;
+        }
+
+        .testimonial-card blockquote {
+            font-size: 1.2rem;
+            font-style: italic;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .testimonial-slider {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-slide {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .testimonial-slide.active {
+            display: flex;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .testimonial-dots {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .testimonial-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .testimonial-dot.active {
+            background: #fff;
+            width: 22px;
+            border-radius: 999px;
+        }
+
+        @media (max-width: 640px) {
+            .testimonial-card {
+                padding: 28px;
+            }
+
+            .testimonial-card blockquote {
+                font-size: 1.05rem;
+            }
+
+            .testimonial-slider {
+                gap: 16px;
+            }
+        }
+
+        .testimonial-meta {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-meta .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            background: #0b1121;
+            color: #94a3b8;
+            padding: 64px 24px;
+        }
+
+        .footer-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+        }
+
+        .footer-grid h3 {
+            color: #fff;
+            font-size: 0.9rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .footer-grid a {
+            color: #e0f2fe;
+        }
+
+        .footer-bottom {
+            max-width: 1100px;
+            margin: 48px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-inner {
+                flex-direction: column;
+            }
+
+            .slot-chip {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-cta {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero {
+                padding-top: 96px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .hero-panel {
+                width: 100%;
+            }
+
+            .hero-text {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top-nav">
+        <div class="nav-inner">
+            <div class="logo-pack">
+                <img src="cropped-pos_experice_logo_200a.png" alt="P.O.S. The Instore Experience" class="nav-logo">
+            </div>
+            <div class="slot-chip">
+                <i class="fa-regular fa-clock"></i>
+                Slot reserviert: 23:14 Uhr
+            </div>
+            <a class="nav-cta" href="mailto:info@pos-experience.de?subject=POS%20Screen%20Slot&amp;body=Bitte%20um%20R%C3%BCckruf%20zum%20Slot%20im%20EDEKA%20M%C3%BCller">
+                Slot sichern
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="stage-new-section">
+            <div class="stage-new-container">
+                <div class="stage-new-frame">
+                    <div class="stage-new-stage" id="stageNewStage">
+                        <div class="stage-new-content-wrapper" id="stageNewContentWrapper">
+                            <div class="stage-new-content-scaler">
+                                <div id="dynamic-content-new">
+                                    <div class="loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Lädt Ihre Demo...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stage-new-controls">
+                            <button class="control-btn play" id="playBtnNew" style="display: none;" title="Play">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button class="control-btn pause" id="pauseBtnNew" title="Pause">
+                                <i class="fa-solid fa-pause"></i>
+                            </button>
+                            <button class="control-btn restart" id="restartBtnNew" title="Restart">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stage-new-text">
+                        <span class="eyebrow">
+                            <i class="fa-solid fa-location-dot"></i>
+                            Frischemarkt Wucherpfennig
+                        </span>
+                        <h1>
+                            Ihre Marke direkt im <span>EDEKA Markt</span> Ihrer Kunden.
+                        </h1>
+                        <p>
+                            Sichern Sie sich die exklusiv sichtbare Bildschirmfläche am Einkaufsort Ihrer Zielgruppe.
+                            15.000 Besucher pro Woche, 130m von Ihrem Laden entfernt, volle Aufmerksamkeit für Ihre Story.
+                        </p>
+                        <div class="hero-actions">
+                            <a class="btn primary" href="#audience">
+                                Slot prüfen
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                            <a class="btn secondary" href="mailto:info@pos-experience.de?subject=Beratung%20POS%20Screen&amp;body=Ich%20m%C3%B6chte%20mehr%20%C3%BCber%20die%20POS%20Screens%20erfahren.">
+                                Beratung anfordern
+                            </a>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fa-solid fa-shield"></i>
+                            Offizieller Retail-Partner von EDEKA
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="partner-section">
+            <p>P.O.S. Instore Experience ist Technologie-Partner von</p>
+            <div class="partner-logos-wrapper">
+                <div class="partner-logos">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Logo_Edeka.svg" alt="EDEKA">
+                    <img src="https://mp.group/wp-content/uploads/FN-logo_vertical_green_sRGB-2048x1490.png" alt="Fressnapf">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Snipes_logo.svg/960px-Snipes_logo.svg.png" alt="Snipes">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Kaufland_Logo.svg" alt="Kaufland">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/XXXLutz_logo.svg/512px-XXXLutz_logo.svg.png" alt="XXXLutz">
+                    <img src="https://janina-felix.de/wp-content/uploads/2014/11/Jim-Block-Logo-dmgdw.png" alt="Jim Block">
+                    <img src="https://upload.wikimedia.org/wikipedia/de/thumb/2/29/Bijou_Brigitte_logo.svg/960px-Bijou_Brigitte_logo.svg.png" alt="Bijou Brigitte">
+                    <img src="https://logos-world.net/wp-content/uploads/2022/06/British-American-Tobacco-Logo.png" alt="BAT">
+                    <!-- Duplicate for seamless loop -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Logo_Edeka.svg" alt="EDEKA">
+                    <img src="https://mp.group/wp-content/uploads/FN-logo_vertical_green_sRGB-2048x1490.png" alt="Fressnapf">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Snipes_logo.svg/960px-Snipes_logo.svg.png" alt="Snipes">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Kaufland_Logo.svg" alt="Kaufland">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/XXXLutz_logo.svg/512px-XXXLutz_logo.svg.png" alt="XXXLutz">
+                    <img src="https://janina-felix.de/wp-content/uploads/2014/11/Jim-Block-Logo-dmgdw.png" alt="Jim Block">
+                    <img src="https://upload.wikimedia.org/wikipedia/de/thumb/2/29/Bijou_Brigitte_logo.svg/960px-Bijou_Brigitte_logo.svg.png" alt="Bijou Brigitte">
+                    <img src="https://logos-world.net/wp-content/uploads/2022/06/British-American-Tobacco-Logo.png" alt="BAT">
+                </div>
+            </div>
+        </section>
+
+        <section class="hero" id="kontakt">
+            <div class="hero-grid">
+                <div class="hero-text">
+                    <h2>Warum P.O.S. Marketing funktioniert</h2>
+                    <p>Es geht nicht um Clicks, sondern um Vertrauen im Alltag Ihrer Kunden.</p>
+                    <ul class="benefits-list">
+                        <li class="benefit-item">
+                            <div class="benefit-icon" style="background: #dbeafe; color: var(--brand);">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+                            <div class="benefit-content">
+                                <h4>100% Zielgruppe, 0% Streuverlust</h4>
+                                <p>
+                                    Ihre idealen Kunden wohnen im 3km Radius. Wer hier einkauft, gehört automatisch zu Ihrem Einzugsgebiet. 
+                                </p>
+                            </div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon" style="background: #fef3c7; color: #b45309;">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div class="benefit-content">
+                                <h4>Der psychologische "Anker-Effekt"</h4>
+                                <p>
+                                    6–8 Kontakte pro Monat schaffen unterbewusste Vertrautheit. Wenn der Bedarf entsteht, sind Sie die erste Wahl im Kopf, weil Sie im Alltag präsent waren.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="benefit-item">
+                            <div class="benefit-icon" style="background: #dcfce7; color: #15803d;">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div class="benefit-content">
+                                <h4>Exklusiver Wettbewerbs-Vorteil</h4>
+                                <p>
+                                    Profitieren Sie vom Vertrauen der Marke EDEKA und blockieren Sie Ihre Konkurrenz. Wir vergeben diesen Slot nur einmal pro Branche, was Ihnen die lokale Dominanz sichert.
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="hero-panel">
+                    <div class="panel-badge">
+                        <i class="fa-solid fa-star"></i>
+                        Startpartner-Vorteil
+                    </div>
+                    <div class="panel-content">
+                        <h3>Erste Asset-Erstellung Gratis!</h3>
+                        <div class="savings-highlight">
+                            <span class="old-price" style="font-size: 1.1rem;">450 €</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <strong style="font-size: 1.3rem;">KOSTENLOS</strong>
+                        </div>
+                        <ul>
+                            <li>
+                                <div class="icon-wrap bolt">
+                                    <i class="fa-solid fa-gift"></i>
+                                </div>
+                                <div>
+                                    <strong>Produktionskosten entfallen</strong><br>
+                                    <span style="font-size: 0.9rem; color: #64748b;">Design & Umsetzung im Wert von 450€</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="icon-wrap lock">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div>
+                                    <strong>Konkurrenzschutz</strong><br>
+                                    <span style="font-size: 0.9rem; color: #64748b;">Exklusivität für Ihre Branche garantiert</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="icon-wrap check">
+                                    <i class="fa-solid fa-percent"></i>
+                                </div>
+                                <div>
+                                    <strong>Sonderkonditionen bei Langzeitbuchung</strong><br>
+                                    <span style="font-size: 0.9rem; color: #64748b;">Bis zu 30% Rabatt – nur für Startpartner</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <button class="panel-cta" onclick="window.location.href='#kontakt'">
+                            Jetzt Slot sichern
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <div class="panel-footer">
+                            <i class="fa-solid fa-fire"></i>
+                            Nur noch 3 Slots in diesem Markt verfügbar
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="audience">
+            <h2>Wer sieht Ihre Werbung?</h2>
+            <p class="section-intro">Offizielle Marktdaten für diesen Standort – so präzise waren Zielgruppen noch nie.</p>
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <div class="icon" style="background:#dbeafe;color:var(--brand);">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3><span class="counter" data-target="35">0</span>–<span class="counter" data-target="55">0</span></h3>
+                    <strong>Jahre Durchschnittsalter</strong>
+                    <p>Kaufkräftige Familien und Haushalte im 2 km Radius des Marktes.</p>
+                </article>
+                <article class="stat-card">
+                    <div class="icon" style="background:#dcfce7;color:#16a34a;">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <h3><span class="counter" data-target="42" data-suffix=" €">0 €</span></h3>
+                    <strong>Ø Warenkorb-Wert</strong>
+                    <p>Premium-Zielgruppe mit hoher Ausgabebereitschaft pro Einkauf.</p>
+                </article>
+                <article class="stat-card">
+                    <div class="icon" style="background:#fee2e2;color:#dc2626;">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+                    <h3><span class="counter" data-target="35" data-suffix=" Min">0 Min</span></h3>
+                    <strong>Ø Verweildauer</strong>
+                    <p>Lange Kontaktzeit: Ihre Botschaft wird mehrfach wahrgenommen.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section process-section">
+            <h2>So kommt Ihre Marke auf den Screen</h2>
+            <div class="process-grid">
+                <article class="process-step">
+                    <div class="step-index">1</div>
+                    <h3>Slot sichern</h3>
+                    <p>Wir prüfen Verfügbarkeit und reservieren den Screen exklusiv für Ihre Branche.</p>
+                </article>
+                <article class="process-step">
+                    <div class="step-index">2</div>
+                    <h3>Design veredeln</h3>
+                    <p>Launch-Paket inklusive: Wir optimieren Ihren Look für maximale Wirkung.</p>
+                </article>
+                <article class="process-step">
+                    <div class="step-index">3</div>
+                    <h3>Go live in 48h</h3>
+                    <p>Ihre Story läuft direkt vor Ort – sichtbar für tausende reale Besucher.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section pricing-section" id="pricing">
+            <div class="pricing-container">
+                <div class="calculator-card">
+                    <div class="calculator-header">
+                        <h3>Werbefläche Kosten berechnen</h3>
+                        <p>Konfigurieren Sie Ihre Kampagne in 3 Schritten – transparente Preise, keine versteckten Kosten</p>
+                    </div>
+
+                    <!-- Step 1: Duration -->
+                    <div class="calculator-step">
+                        <div class="step-header">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Wie lange möchten Sie werben?</span>
+                        </div>
+                        <p class="step-description">Wählen Sie Ihre gewünschte Laufzeit. Längere Buchungen erhalten automatische Rabatte.</p>
+                        <div class="duration-presets">
+                            <label class="duration-preset active" for="dur-1">
+                                <input type="radio" name="duration" id="dur-1" value="1" checked>
+                                <div class="duration-value">1</div>
+                                <div class="duration-label">Monat</div>
+                            </label>
+                            <label class="duration-preset" for="dur-3">
+                                <input type="radio" name="duration" id="dur-3" value="3">
+                                <div class="duration-badge">10% Rabatt</div>
+                                <div class="duration-value">3</div>
+                                <div class="duration-label">Monate</div>
+                            </label>
+                            <label class="duration-preset" for="dur-6">
+                                <input type="radio" name="duration" id="dur-6" value="6">
+                                <div class="duration-badge">20% Rabatt</div>
+                                <div class="duration-value">6</div>
+                                <div class="duration-label">Monate</div>
+                            </label>
+                            <label class="duration-preset" for="dur-12">
+                                <input type="radio" name="duration" id="dur-12" value="12">
+                                <div class="duration-badge">30% Rabatt</div>
+                                <div class="duration-value">12</div>
+                                <div class="duration-label">Monate</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Frequency -->
+                    <div class="calculator-step">
+                        <div class="step-header">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Wie oft möchten Sie Ihre Werbung wechseln?</span>
+                        </div>
+                        <p class="step-description">Bestimmen Sie die Häufigkeit der Banner-Erstellung. Regelmäßige Wechsel halten Ihre Kampagne frisch und relevant.</p>
+                        <div class="frequency-selector">
+                            <label class="frequency-option active" for="freq-same">
+                                <input type="radio" name="frequency" id="freq-same" value="same" checked>
+                                <div class="frequency-title">Gleiches Motiv</div>
+                                <div class="frequency-desc">Kein Wechsel</div>
+                                <div class="frequency-price included">Inklusive</div>
+                            </label>
+                            <label class="frequency-option" for="freq-monthly">
+                                <input type="radio" name="frequency" id="freq-monthly" value="monthly">
+                                <div class="frequency-title">Monatlich</div>
+                                <div class="frequency-desc">1 neues Design/Monat</div>
+                                <div class="frequency-price">+ 100 €/Monat</div>
+                            </label>
+                            <label class="frequency-option" for="freq-bimonthly">
+                                <input type="radio" name="frequency" id="freq-bimonthly" value="bimonthly">
+                                <div class="frequency-title">Alle 2 Wochen</div>
+                                <div class="frequency-desc">2 neue Designs/Monat</div>
+                                <div class="frequency-price">+ 150 €/Monat</div>
+                            </label>
+                            <label class="frequency-option" for="freq-weekly">
+                                <input type="radio" name="frequency" id="freq-weekly" value="weekly">
+                                <div class="frequency-title">Wöchentlich</div>
+                                <div class="frequency-desc">4 neue Designs/Monat</div>
+                                <div class="frequency-price">+ 200 €/Monat</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Variants -->
+                    <div class="calculator-step">
+                        <div class="step-header">
+                            <span class="step-number">3</span>
+                            <span class="step-title">Wie viele Varianten gleichzeitig?</span>
+                        </div>
+                        <p class="step-description">Schalten Sie mehrere Designs parallel, um verschiedene Zielgruppen anzusprechen oder A/B-Tests durchzuführen.</p>
+                        <div class="variants-container">
+                            <div class="variants-display">
+                                <div>
+                                    <div class="variants-count" id="variantsCount">1</div>
+                                    <div style="font-size: 0.9rem; color: #64748b; font-weight: 600;">Design(s) gleichzeitig</div>
+                                </div>
+                                <div class="variants-price">
+                                    <div class="variants-price-value" id="variantsPrice">0 €</div>
+                                    <div class="variants-price-label">zusätzlich/Monat</div>
+                                </div>
+                            </div>
+                            <div style="position: relative;">
+                                <div class="variants-slider-track">
+                                    <div class="variants-slider-fill" id="variantsFill"></div>
+                                </div>
+                                <input type="range" id="variantsSlider" min="1" max="5" value="1" step="1">
+                            </div>
+                            <div class="variants-markers">
+                                <span class="variants-marker active" data-value="1">1</span>
+                                <span class="variants-marker" data-value="2">2</span>
+                                <span class="variants-marker" data-value="3">3</span>
+                                <span class="variants-marker" data-value="4">4</span>
+                                <span class="variants-marker" data-value="5">5</span>
+                            </div>
+                            <div class="variants-info">
+                                <strong>Hinweis:</strong> 1 Design ist inklusive. Jedes weitere Design kostet + 50 €/Monat. 
+                                Perfekt für saisonale Aktionen oder verschiedene Produkte.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Price Display -->
+                    <div class="price-display">
+                        <div class="discount-badge" id="discountBadge"></div>
+                        <div class="price-amount" id="priceAmount">450 €</div>
+                        <div class="price-period" id="pricePeriod">pro Monat</div>
+                        <div class="price-breakdown" id="priceBreakdown"></div>
+                    </div>
+
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Launch-Paket gratis</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Konkurrenzschutz</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>15.000+ Impressions/Woche</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Flexible Anpassungen</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Monatlich kündbar</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>Performance-Reporting</span>
+                        </div>
+                    </div>
+
+                    <button class="calculator-cta" id="calculatorCta">
+                        Jetzt unverbindlich anfragen
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <div class="pricing-note">
+                        <strong>Keine versteckten Kosten.</strong> Produktionskosten (450 €) sind im Startpartner-Paket bereits enthalten.<br>
+                        Monatliche Kündigung möglich. Rabatte gelten ab 6 bzw. 12 Monaten Laufzeit.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section identity-section">
+            <div class="identity-grid">
+                <div>
+                    <h2>Warum POS? Das Instore-Erlebnis</h2>
+                    <p style="margin: 10px 0 26px; color: #64748b;">So sorgen wir dafür, dass Ihre Botschaft direkt am Regal wirkt.</p>
+                    <ul>
+                        <li>
+                            <div class="marker">
+                                <i class="fa-solid fa-bullseye"></i>
+                            </div>
+                            <div>
+                                <h4>Gezielte Aufmerksamkeit</h4>
+                                <p>Platzierung exakt am Point of Sale für maximale Sichtbarkeit.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="marker" style="background:#fef9c3;color:#b45309;">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <h4>Relevante Inhalte</h4>
+                                <p>Dynamische Spots, abgestimmt auf Sortiment, Saison und Standort.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="marker" style="background:#ecfeff;color:#0ea5e9;">
+                                <i class="fa-solid fa-chart-column"></i>
+                            </div>
+                            <div>
+                                <h4>Nachweisbarer Effekt</h4>
+                                <p>Messbare Steigerung von Abverkauf und Markenbekanntheit.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="marker" style="background:#fef2f2;color:#b91c1c;">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <div>
+                                <h4>Schnelle Umsetzung</h4>
+                                <p>Von Briefing bis Live-Schaltung in wenigen Tagen.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="marker" style="background:#ecfdf3;color:#16a34a;">
+                                <i class="fa-solid fa-handshake"></i>
+                            </div>
+                            <div>
+                                <h4>Service aus einer Hand</h4>
+                                <p>Kreation, Produktion, Rollout und Support durch unser Team.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-slider" id="testimonialSlider">
+                        <div class="testimonial-slide active">
+                            <blockquote>"Seit wir im lokalen EDEKA präsent sind, sprechen uns Patienten direkt im Viertel an.
+                                Diese Nähe schafft Vertrauen, das keine Online-Kampagne ersetzen kann."</blockquote>
+                            <div class="testimonial-meta">
+                                <div class="avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <strong>Zahnarztpraxis Dr. Weber</strong>
+                                    <p>Hamburg Winterhude</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <blockquote>"Die Spots laufen genau dann, wenn Kunden am Regal stehen – wir sehen den Effekt in den Wochenumsätzen."</blockquote>
+                            <div class="testimonial-meta">
+                                <div class="avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <strong>Brand Managerin, FMCG</strong>
+                                    <p>Hamburg Nord</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <blockquote>"Änderungen gehen innerhalb eines Tages live. So konnten wir eine Aktion spontan verlängern."</blockquote>
+                            <div class="testimonial-meta">
+                                <div class="avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <strong>Marketingleiter, Food Startup</strong>
+                                    <p>Berlin</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-dots" id="testimonialDots">
+                            <button class="testimonial-dot active" aria-label="Slide 1"></button>
+                            <button class="testimonial-dot" aria-label="Slide 2"></button>
+                            <button class="testimonial-dot" aria-label="Slide 3"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>Kontakt</h3>
+                <p>info@pos-experience.de</p>
+                <p>Wir beraten Sie persönlich – telefonisch oder vor Ort.</p>
+            </div>
+            <div>
+                <h3>Adresse</h3>
+                <p>P.O.S. Television GmbH</p>
+                <p>Jaguarstieg 14a · 22527 Hamburg</p>
+            </div>
+            <div>
+                <h3>Über uns</h3>
+                <p>Partner für digitale Point-of-Sale Lösungen.</p>
+                <p>Professionell. Flexibel. Wirkungsvoll.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 P.O.S. Television GmbH – Alle Rechte vorbehalten
+        </div>
+    </footer>
+
+    <script>
+        function getClientFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const client = params.get('c') || params.get('client') || 'optiker';
+            console.log('Loading client:', client);
+            return client;
+        }
+
+        function formatTitle(key) {
+            return key
+                .split(/[-_]/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+
+        async function loadClientContent() {
+            const clientKey = getClientFromURL();
+            const filePath = `spots/${clientKey}.html`;
+            const clientName = formatTitle(clientKey);
+
+            try {
+                const response = await fetch(filePath);
+
+                if (!response.ok) {
+                    throw new Error(`Template not found: ${filePath} (${response.status})`);
+                }
+
+                const html = await response.text();
+
+                const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+                const bodyContent = bodyMatch ? bodyMatch[1] : html;
+
+                const styleMatch = html.match(/<style[^>]*>([\s\S]*)<\/style>/i);
+                const styleContent = styleMatch ? styleMatch[1] : '';
+
+                // Load content into the new stage
+                const newContentEl = document.getElementById('dynamic-content-new');
+                if (newContentEl) {
+                    newContentEl.innerHTML = bodyContent;
+                }
+
+                if (styleContent) {
+                    const styleEl = document.createElement('style');
+                    styleEl.textContent = styleContent;
+                    document.head.appendChild(styleEl);
+                }
+
+                // Load external scripts first
+                const scriptSrcRegex = /<script[^>]*src=["']([^"']+)["'][^>]*><\/script>/gi;
+                const externalScripts = [];
+                let srcMatch;
+                while ((srcMatch = scriptSrcRegex.exec(html)) !== null) {
+                    externalScripts.push(srcMatch[1]);
+                }
+
+                // Load external scripts sequentially
+                async function loadExternalScripts() {
+                    for (const src of externalScripts) {
+                        await new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    }
+                }
+
+                // Execute inline scripts after external scripts load
+                loadExternalScripts().then(() => {
+                    const scriptRegex = /<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi;
+                    const scripts = [];
+                    let match;
+                    while ((match = scriptRegex.exec(html)) !== null) {
+                        scripts.push(match[1]);
+                    }
+
+                    // Execute scripts for new stage in its own scope
+                    const newContentEl = document.getElementById('dynamic-content-new');
+                    if (newContentEl && typeof gsap !== 'undefined') {
+                        setTimeout(() => {
+                            scripts.forEach(scriptContent => {
+                                if (scriptContent && scriptContent.trim()) {
+                                    try {
+                                        // Create completely isolated GSAP context for the new stage
+                                        const cleanScript = scriptContent.replace(/function resizeTemplate\(\)[\s\S]*?resizeTemplate\(\);/g, '');
+                                        
+                                        // Replace all element queries to be scoped to newContentEl
+                                        let scopedScript = cleanScript
+                                            .replace(/document\.getElementById\(['"]([^'"]+)['"]\)/g, 'newContentEl.querySelector("#$1")')
+                                            .replace(/document\.querySelector\(/g, 'newContentEl.querySelector(')
+                                            .replace(/document\.querySelectorAll\(/g, 'newContentEl.querySelectorAll(');
+                                        
+                                        // Create isolated GSAP context
+                                        const executeScoped = new Function('newContentEl', 'gsap', `
+                                            // Ensure all GSAP animations target only elements within newContentEl
+                                            const ctx = gsap.context(() => {
+                                                ${scopedScript}
+                                            }, newContentEl);
+                                            
+                                            // Return the timeline if it exists
+                                            return typeof tl !== "undefined" ? tl : null;
+                                        `);
+                                        
+                                        const timeline = executeScoped(newContentEl, gsap);
+                                        
+                                        if (timeline) {
+                                            window.animationTimelineNew = timeline;
+                                            console.log('New stage animation initialized successfully', timeline);
+                                        } else {
+                                            console.warn('No timeline found in new stage script');
+                                        }
+                                    } catch (e) {
+                                        console.error('Error executing script for new stage:', e);
+                                    }
+                                }
+                            });
+                        }, 300);
+                    }
+                }).catch(err => {
+                    console.error('Error loading external scripts:', err);
+                });
+
+                scaleContentNew();
+                document.title = `POS Demo - ${clientName}`;
+
+            } catch (error) {
+                console.error('Load error:', error);
+                const errorHTML = `<div class="loading" style="flex-direction:column; text-align:center; gap: 15px;">
+                        <i class="fas fa-exclamation-circle" style="color: #b91c1c; font-size: 48px;"></i>
+                        <div style="font-size: 20px; margin-top: 10px;">Demo "${clientName}" nicht gefunden</div>
+                        <div style="font-size: 14px; margin-top: 5px; opacity: 0.7;">(${filePath})</div>
+                        <div style="font-size: 14px; margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.5); border-radius: 8px;">
+                            Verfügbare Demos:<br>
+                            <a href="?c=optiker" style="color: #004b93; text-decoration: underline;">Optiker</a> | 
+                            <a href="?c=garten" style="color: #004b93; text-decoration: underline;">Garten</a> | 
+                            <a href="?c=forster-apotheke" style="color: #004b93; text-decoration: underline;">Apotheke</a> | 
+                            <a href="?c=forster-apotheke2" style="color: #004b93; text-decoration: underline;">Apotheke 2</a>
+                        </div>
+                    </div>`;
+                const newContentEl = document.getElementById('dynamic-content-new');
+                if (newContentEl) {
+                    newContentEl.innerHTML = errorHTML;
+                }
+            }
+        }
+
+        function scaleContentNew() {
+            const stage = document.getElementById('stageNewStage');
+            const wrapper = document.getElementById('stageNewContentWrapper');
+            const scaler = document.querySelector('.stage-new-content-scaler');
+
+            if (!stage || !wrapper || !scaler) return;
+
+            // Get actual stage dimensions
+            const stageWidth = stage.offsetWidth;
+            const stageHeight = stage.offsetHeight;
+
+            // Original image dimensions from Paint
+            const imgOriginalWidth = 800;
+            const imgOriginalHeight = 533;
+            
+            // Original content area in Paint coordinates
+            const contentX = 543;
+            const contentY = 33;
+            const contentOriginalWidth = 208;
+            const contentOriginalHeight = 424;
+            
+            // Apply scaling
+            const scaleFactor = 1;
+            
+            // Calculate as percentages of original image
+            const contentXPercent = (contentX / imgOriginalWidth) * 100;
+            const contentYPercent = (contentY / imgOriginalHeight) * 100;
+            const contentWidthPercent = (contentOriginalWidth / imgOriginalWidth) * 100 * scaleFactor;
+
+            // Calculate scaled content position and width
+            const scaledX = (stageWidth * contentXPercent) / 100;
+            const scaledY = (stageHeight * contentYPercent) / 100;
+            const scaledWidth = (stageWidth * contentWidthPercent) / 100;
+            
+            // Enforce 9:16 aspect ratio
+            const scaledHeight = scaledWidth * (16 / 9);
+
+            // Apply positioning
+            wrapper.style.left = scaledX + 'px';
+            wrapper.style.top = scaledY + 'px';
+            wrapper.style.width = scaledWidth + 'px';
+            wrapper.style.height = scaledHeight + 'px';
+
+            // Scale the 1080x1920 content to fit
+            const contentScaleX = scaledWidth / 1080;
+            const contentScaleY = scaledHeight / 1920;
+            const contentScale = Math.min(contentScaleX, contentScaleY);
+
+            scaler.style.transform = `scale(${contentScale})`;
+            
+            // Improve rendering quality at different scales
+            if (contentScale < 1) {
+                scaler.style.imageRendering = 'crisp-edges';
+            } else {
+                scaler.style.imageRendering = 'auto';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadClientContent();
+            window.addEventListener('resize', scaleContentNew);
+            initPricingCalculator();
+            initAnimationControlsNew();
+            initTestimonialSlider();
+        });
+
+        // Animation Controls
+        function initAnimationControlsNew() {
+            const playBtnNew = document.getElementById('playBtnNew');
+            const pauseBtnNew = document.getElementById('pauseBtnNew');
+            const restartBtnNew = document.getElementById('restartBtnNew');
+
+            if (!playBtnNew || !pauseBtnNew || !restartBtnNew) return;
+
+            playBtnNew.addEventListener('click', () => {
+                const tl = window.animationTimelineNew;
+                if (tl) {
+                    tl.play();
+                    playBtnNew.style.display = 'none';
+                    pauseBtnNew.style.display = 'flex';
+                }
+            });
+
+            pauseBtnNew.addEventListener('click', () => {
+                const tl = window.animationTimelineNew;
+                if (tl) {
+                    tl.pause();
+                    pauseBtnNew.style.display = 'none';
+                    playBtnNew.style.display = 'flex';
+                }
+            });
+
+            restartBtnNew.addEventListener('click', () => {
+                const tl = window.animationTimelineNew;
+                if (tl) {
+                    tl.restart();
+                    pauseBtnNew.style.display = 'flex';
+                    playBtnNew.style.display = 'none';
+                }
+            });
+        }
+
+        // Pricing Calculator Logic
+        function initPricingCalculator() {
+            const durationPresets = document.querySelectorAll('.duration-preset');
+            const durationRadios = document.querySelectorAll('input[name="duration"]');
+            const frequencyOptions = document.querySelectorAll('.frequency-option');
+            const frequencyRadios = document.querySelectorAll('input[name="frequency"]');
+            const variantsSlider = document.getElementById('variantsSlider');
+            const variantsFill = document.getElementById('variantsFill');
+            const variantsCount = document.getElementById('variantsCount');
+            const variantsPrice = document.getElementById('variantsPrice');
+            const variantsMarkers = document.querySelectorAll('.variants-marker');
+            const priceAmount = document.getElementById('priceAmount');
+            const pricePeriod = document.getElementById('pricePeriod');
+            const priceBreakdown = document.getElementById('priceBreakdown');
+            const discountBadge = document.getElementById('discountBadge');
+
+            // Pricing logic
+            const basePrice = 450;
+            const frequencySurcharge = {
+                'same': 0,
+                'monthly': 100,
+                'bimonthly': 150,
+                'weekly': 200
+            };
+            const variantCost = 50; // per additional variant per month
+            
+            function calculatePrice(months, frequency, variants) {
+                let discountedBasePrice = basePrice;
+                let discount = 0;
+
+                if (months >= 12) {
+                    discount = 30;
+                    discountedBasePrice = 300;
+                } else if (months >= 6) {
+                    discount = 20;
+                    discountedBasePrice = 360;
+                } else if (months >= 3) {
+                    discount = 10;
+                    discountedBasePrice = Math.round(basePrice * 0.9);
+                }
+
+                const surcharge = frequencySurcharge[frequency];
+                const variantsCost = (variants - 1) * variantCost; // First variant is free
+                const finalMonthlyPrice = discountedBasePrice + surcharge + variantsCost;
+                const originalMonthly = basePrice + surcharge + variantsCost;
+                const total = finalMonthlyPrice * months;
+                const originalTotal = originalMonthly * months;
+
+                return { 
+                    monthlyPrice: finalMonthlyPrice, 
+                    baseMonthlyPrice: discountedBasePrice, 
+                    discount, 
+                    total, 
+                    surcharge,
+                    variantsCost,
+                    originalMonthly,
+                    originalTotal
+                };
+            }
+            
+            function updateDisplay() {
+                const months = parseInt(document.querySelector('input[name="duration"]:checked').value);
+                const frequency = document.querySelector('input[name="frequency"]:checked').value;
+                const variants = parseInt(variantsSlider.value);
+                
+                const { monthlyPrice, baseMonthlyPrice, discount, total, surcharge, variantsCost, originalMonthly, originalTotal } = calculatePrice(months, frequency, variants);
+
+                // Update variants display
+                variantsCount.textContent = variants;
+                variantsPrice.textContent = variantsCost.toLocaleString('de-DE') + ' €';
+                const variantsFillPercent = ((variants - 1) / 4) * 100;
+                variantsFill.style.width = variantsFillPercent + '%';
+                
+                // Update variant markers
+                variantsMarkers.forEach(marker => {
+                    const markerValue = parseInt(marker.getAttribute('data-value'));
+                    if (markerValue <= variants) {
+                        marker.classList.add('active');
+                    } else {
+                        marker.classList.remove('active');
+                    }
+                });
+
+                // Update price display
+                priceAmount.textContent = monthlyPrice.toLocaleString('de-DE') + ' €';
+                pricePeriod.textContent = 'pro Monat';
+
+                // Update discount badge
+                if (discount > 0) {
+                    discountBadge.textContent = `${discount}% Rabatt`;
+                    discountBadge.classList.add('visible');
+                } else {
+                    discountBadge.classList.remove('visible');
+                }
+
+                const totalRow = `
+                    <div class="price-breakdown-row" style="padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
+                        <span><strong>Gesamtpreis (${months} Monat${months > 1 ? 'e' : ''})</strong></span>
+                        <span>
+                            ${discount > 0 ? `<span class="original">${originalTotal.toLocaleString('de-DE')} €</span>` : ''}
+                            <strong>${total.toLocaleString('de-DE')} €</strong>
+                        </span>
+                    </div>`;
+
+                const monthlyParts = [`${baseMonthlyPrice.toLocaleString('de-DE')} € Basis`];
+                if (surcharge > 0) monthlyParts.push(`+ ${surcharge.toLocaleString('de-DE')} € Wechsel`);
+                if (variantsCost > 0) monthlyParts.push(`+ ${variantsCost.toLocaleString('de-DE')} € Varianten`);
+                monthlyParts.push(`= ${monthlyPrice.toLocaleString('de-DE')} €`);
+
+                const monthlyRow = `
+                    <div class="price-breakdown-row">
+                        <span>Monatlich</span>
+                        <span>${monthlyParts.join(' ')}</span>
+                    </div>`;
+
+                priceBreakdown.innerHTML = totalRow + monthlyRow;
+            }
+
+            // Handle duration preset selection
+            durationPresets.forEach(preset => {
+                preset.addEventListener('click', function() {
+                    durationPresets.forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    updateDisplay();
+                });
+            });
+
+            durationRadios.forEach(radio => {
+                radio.addEventListener('change', updateDisplay);
+            });
+
+            // Handle frequency selection visual state
+            frequencyOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    frequencyOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    updateDisplay();
+                });
+            });
+
+            frequencyRadios.forEach(radio => {
+                radio.addEventListener('change', updateDisplay);
+            });
+
+            // Handle variants slider
+            variantsSlider.addEventListener('input', updateDisplay);
+
+            // Handle CTA button click
+            document.getElementById('calculatorCta').addEventListener('click', function() {
+                const months = parseInt(document.querySelector('input[name="duration"]:checked').value);
+                const frequency = document.querySelector('input[name="frequency"]:checked').value;
+                const variants = parseInt(variantsSlider.value);
+                const { monthlyPrice, total } = calculatePrice(months, frequency, variants);
+
+                // Map frequency to readable text
+                const frequencyText = {
+                    'same': 'Gleiches Motiv (kein Wechsel)',
+                    'monthly': 'Monatlich (1 Design pro Monat)',
+                    'bimonthly': 'Alle 2 Wochen (2 Designs pro Monat)',
+                    'weekly': 'Wöchentlich (4 Designs pro Monat)'
+                };
+
+                // Create email body with blank fields for user to fill
+                const subject = 'Anfrage POS Screen Werbung - EDEKA Müller';
+                const body = `Sehr geehrte Damen und Herren,
+
+ich interessiere mich für Werbung auf Ihren POS-Screens im EDEKA Müller, Hamburg-Nord.
+
+KONTAKTDATEN:
+Name: [Bitte ausfüllen]
+Unternehmen: [Bitte ausfüllen]
+Telefon: [Bitte ausfüllen]
+E-Mail: [Bitte ausfüllen]
+
+GEWÜNSCHTE KONFIGURATION:
+Laufzeit: ${months} Monat${months > 1 ? 'e' : ''}
+Wechselhäufigkeit: ${frequencyText[frequency]}
+Gleichzeitige Varianten: ${variants} Design${variants > 1 ? 's' : ''}
+
+PREISÜBERSICHT:
+Monatlicher Preis: ${monthlyPrice.toLocaleString('de-DE')} €
+Gesamtpreis: ${total.toLocaleString('de-DE')} €
+
+Bitte kontaktieren Sie mich für ein unverbindliches Beratungsgespräch.
+
+Mit freundlichen Grüßen`;
+
+                const mailtoLink = `mailto:info@pos-experience.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.location.href = mailtoLink;
+            });
+
+            updateDisplay();
+        }
+
+        // Testimonial Slider
+        function initTestimonialSlider() {
+            const slides = Array.from(document.querySelectorAll('#testimonialSlider .testimonial-slide'));
+            const dots = Array.from(document.querySelectorAll('#testimonialDots .testimonial-dot'));
+            if (!slides.length || slides.length !== dots.length) return;
+
+            let current = 0;
+            let timer = null;
+
+            const setActive = (index) => {
+                slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                current = index;
+            };
+
+            const next = () => setActive((current + 1) % slides.length);
+
+            const start = () => {
+                clearInterval(timer);
+                timer = setInterval(next, 8000);
+            };
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    setActive(index);
+                    start();
+                });
+            });
+
+            setActive(0);
+            start();
+        }
+
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const suffix = counter.getAttribute('data-suffix') || '';
+                const duration = 1000; // 1 second
+                const start = 0;
+                const increment = target / (duration / 16); // 60fps
+                let current = start;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = Math.floor(current) + suffix;
+                }, 16);
+            });
+        }
+
+        // Intersection Observer for stats section
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                    entry.target.classList.add('animated');
+                    animateCounters();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe the stats section
+        const statsSection = document.querySelector('#audience');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+    </script>
+</body>
+
+</html>
