@@ -1,0 +1,9 @@
+services:
+  pos-gen-lead-visualiser:
+    image: ${IMAGE:-pos-gen-lead-visualiser:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${HOST_PORT:-7888}:${CONTAINER_PORT:-80}"
+    restart: unless-stopped
