@@ -625,7 +625,7 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             gap: 12px;
@@ -846,6 +846,13 @@
             margin: 0 auto 48px;
         }
 
+        /* Constrain partner logos to avoid gaps on very large screens */
+        .partner-logos-wrapper {
+            max-width: 2000px !important; /* limit total width so the carousel never stretches beyond this */
+            margin: auto;    /* center within the page */
+            overflow: hidden;  /* keep any overflow hidden (preserve existing behavior) */
+        }
+
         .stats-grid {
             max-width: 1100px;
             margin: 0 auto;
@@ -862,6 +869,7 @@
             box-shadow: var(--shadow-soft);
         }
 
+        
         .stat-card .icon {
             width: 48px;
             height: 48px;
@@ -1699,7 +1707,7 @@
                             15.000 Besucher pro Woche, 130m von Ihrem Laden entfernt, volle Aufmerksamkeit für Ihre Story.
                         </p>
                         <div class="hero-actions">
-                            <a class="btn primary" href="#audience">
+                            <a class="btn primary" href="#pricing">
                                 Slot prüfen
                                 <i class="fa-solid fa-arrow-right"></i>
                             </a>
@@ -1823,7 +1831,7 @@
                                 </div>
                             </li>
                         </ul>
-                        <button class="panel-cta" onclick="window.location.href='#kontakt'">
+                        <button class="panel-cta" onclick="window.location.href='#pricing'">
                             Jetzt Slot sichern
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -2263,13 +2271,13 @@
                                     try {
                                         // Create completely isolated GSAP context for the new stage
                                         const cleanScript = scriptContent.replace(/function resizeTemplate\(\)[\s\S]*?resizeTemplate\(\);/g, '');
-                                        
+
                                         // Replace all element queries to be scoped to newContentEl
                                         let scopedScript = cleanScript
-                                            .replace(/document\.getElementById\(['"]([^'"]+)['"]\)/g, 'newContentEl.querySelector("#$1")')
-                                            .replace(/document\.querySelector\(/g, 'newContentEl.querySelector(')
-                                            .replace(/document\.querySelectorAll\(/g, 'newContentEl.querySelectorAll(');
-                                        
+                                            .replace(/document\.getElementById\(['"]([^'\"]+)['"]\)/g, 'newContentEl.querySelector("#$1")')
+                                            .replace(/document\.querySelectorAll\(/g, 'newContentEl.querySelectorAll(')
+                                            .replace(/document\.querySelector\(/g, 'newContentEl.querySelector(');
+
                                         // Create isolated GSAP context
                                         const executeScoped = new Function('newContentEl', 'gsap', `
                                             // Ensure all GSAP animations target only elements within newContentEl
@@ -2280,7 +2288,7 @@
                                             // Return the timeline if it exists
                                             return typeof tl !== "undefined" ? tl : null;
                                         `);
-                                        
+
                                         const timeline = executeScoped(newContentEl, gsap);
                                         
                                         if (timeline) {

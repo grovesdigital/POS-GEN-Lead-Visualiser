@@ -1,0 +1,36 @@
+# Generated files / build outputs
+build/
+dist/
+out/
+coverage/
+.cache/
+.tmp/
+
+# Node & package managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# Environment / secrets
+.env
+.env.*
+*.env
+
+# OS & editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+POS GEN LEAD VISUALIZER.code-workspace
+Untitled attachment *.htm
+
+# Local Docker data
+*.pid
+docker-data/
